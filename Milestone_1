@@ -1,0 +1,11 @@
+Milestone1/
+│
+├── SupplyChain_Milestone1.pbix
+│
+├── data/
+│   └── SupplyChain.csv
+│
+├── screenshots/
+│   └── Data_model.png
+│
+└── README.md
