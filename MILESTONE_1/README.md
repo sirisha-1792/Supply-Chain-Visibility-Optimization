@@ -64,21 +64,6 @@ A Star Schema data model was designed to improve query performance and simplify 
 - Microsoft Power BI Desktop
 - Power Query Editor
 - DAX (Data Analysis Expressions)
-- Git
-- GitHub
-
-## Repository Structure
-
-```
-Milestone1/
-│── SupplyChain_Milestone1.pbix
-│── data/
-│   └── SupplyChain.csv
-│── screenshots/
-│   └── Data_model.png
-└── README.md
-```
-
 
 ## Author
 
