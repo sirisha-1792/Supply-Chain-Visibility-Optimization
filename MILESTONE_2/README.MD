@@ -63,152 +63,148 @@ The project uses supply chain operational data containing information about:
 
 The data was loaded into Power BI and transformed using Power Query before being used for data modeling and analysis.
 
-# 5. Data Preparation and Data Model
+# Inventory Turnover Calculation Approach
 
-The data was transformed in Power Query to create a dimensional data model.
+Inventory turnover was calculated to measure how efficiently inventory is being utilized.
 
-The model contains a central fact table and multiple dimension tables.
+The inventory turnover ratio was calculated using:
 
-### Fact_table
+Inventory Turnover Ratio = Total Sales / Average Inventory Value
 
-The fact table contains transactional and operational supply chain data, including:
+The DAX measure used was:
 
-- Order information
-- Product information
-- Customer information
-- Sales
-- Profit
-- Quantity
-- Shipping information
-- Delivery status
-- Delivery risk
-- Inventory information
-- Warehouse information
-- Regional information
+Inventory Turnover Ratio =
+DIVIDE(
+    [Total Sales],
+    [Avg Inventory Value],
+    0
+)
 
-The fact table is used as the primary source for transactional analysis.
+## Slow-Moving and Fast-Moving Inventory Identification Logic
 
----
+Inventory performance was analyzed using the number of days since the last sale.
 
-# 6. Dimension Tables
+The inventory status classification logic was:
 
-The following dimension tables were created:
+Out of Stock: Stock quantity is equal to zero.
+Dead Stock: No sale for more than 90 days and stock quantity is greater than zero.
+Slow-Moving: No sale for more than 30 days and up to 90 days.
+Active / Fast-Moving: Products with sales activity within 30 days.
 
-## Dim_Customer
+The DAX logic used was:
 
-Contains customer-related information such as:
-- Customer ID
-- Customer city
-- Customer country
-- Customer first name
-- Customer last name
-- Customer segment
-- Customer street
-- Customer ZIP code
-- Customer state
+Stock Status =
+VAR DaysIdle =
+    Fact_table[Days Since Last Sale (Col)]
+VAR Qty =
+    Fact_table[stock_qty]
+RETURN
+SWITCH(
+    TRUE(),
+    Qty = 0,
+        "Out of Stock",
+    DaysIdle > 90 && Qty > 0,
+        "Dead Stock",
+    DaysIdle > 30 && DaysIdle <= 90,
+        "Slow-Moving",
+    "Active"
+)
 
-## Dim_Product
+# Slow-moving inventory was identified using:
 
-Contains product-related information such as:
-- Product Card ID
-- Product Category ID
-- Product Name
-- Product Price
-- Product Status
-- Category ID
-- Department ID
+Days Since Last Sale > 30 days
+AND
+Days Since Last Sale <= 90 days
 
-## Dim_Category
+# Dead stock was identified using:
 
-Contains category-level information.
+Days Since Last Sale > 90 days
+AND
+Stock Quantity > 0
 
-## Dim_Department
+Products classified as Active and having high sales quantity, high sales volume, and high inventory turnover were considered fast-moving or strong-performing products.
 
-Contains department-level information.
+This classification helps identify products that may require promotional activities, inventory reduction, demand analysis, or replenishment planning.
 
-## Dim_Shipping
+## Delivery Performance Analysis Methodology
 
-Contains shipping-related information such as:
-- Days for shipping
-- Days for shipment
-- Delivery status
-- Late delivery risk
-- Shipping date
-- Shipping mode
-- Shipping ID
+Delivery performance was analyzed using order delivery status, actual shipping time, scheduled shipping time, delivery risk indicators, region, shipping mode, and time-based trends.
 
-## Dim_Location
+The main delivery performance measures included:
 
-Contains geographical information such as:
-- Market
-- Order city
-- Order country
-- Order region
-- Order state
-- Location ID
+On-Time Delivery %
+Late Delivery %
+Advance Shipping %
+Average Days for Shipping (Real)
+Average Days for Shipment (Scheduled)
+Lead Time Variance
+Late Delivery Risk %
+Risk vs Actual Accuracy
+Regional Late Rate
 
-## Dim_Date
+On-time, late, and advance shipping performance were analyzed based on delivery status.
 
-A dedicated date table was created using DAX.
-The date table contains:
-- Date
-- Year
-- Month Number
-- Month
-- Quarter
-- Week
-- Day
-- Day Name
+# The delivery lead time analysis compared actual shipping time with scheduled shipping time:
 
-The date table is used for time-based analysis and trend analysis.
+Lead Time Variance = Average Actual Shipping Days-Average Scheduled Shipping Days
 
-## Dim_Supplier
+A positive lead time variance indicates that actual shipping took longer than scheduled.
 
-Contains supplier performance information such as:
-- Supplier name
-- Lead time
-- Quality score
-- Reliability percentage
+# Late delivery risk was analyzed using the late delivery risk indicator. The percentage of risk-flagged orders was calculated as:
 
-## Dim_Warehouse
+Late Delivery Risk % =
+Total Risk Flagged Orders / Total Orders
 
-Contains warehouse-related information such as:
-- Warehouse ID
-- Warehouse Name
-- Region
-- Capacity
-- Utilization Percentage
+Delivery performance was also analyzed by:
+Region
+Shipping Mode
+Product Category
+Product
+Date
 
-## Dim_Inventory
+This allows delivery issues to be analyzed from a regional level down to the product level using drill-down functionality.
 
-Contains inventory-related information such as:
-- Warehouse ID
-- Product Card ID
-- Stock Quantity
-- Safety Stock
-- Reorder Level
-- Inventory Level
-- Last Restock Date
-- Inventory ID
+Delivery trends over time were analyzed using the date dimension and the Late Delivery % Trend measure.
 
-# 7. Data Model Relationships
+## Key Insights and Business Recommendations
+# Key Insights
 
-The data model connects the fact table with the dimension tables to support filtering and analytical reporting.
+The dashboards provide insights into inventory and delivery performance.
 
-Important relationships include:
+-- Inventory analysis helps identify:
 
-Dim_Customer (1) ─────── (*) Fact_table
+Products with high inventory turnover.
+Slow-moving inventory that has not been sold for more than 30 days.
+Dead stock that has not been sold for more than 90 days.
+Products that are below safety stock levels.
+Products that require replenishment based on reorder levels.
+Inventory value and stock concentration across warehouses and regions.
+Product categories with stronger or weaker sales performance.
 
-Dim_Product (1) ──────── (*) Fact_table
+-- Delivery analysis helps identify:
 
-Dim_Category (1) ─────── (*) Dim_Product
+The percentage of on-time deliveries.
+The percentage of late deliveries.
+The percentage of advance shipments.
+Regions with higher late delivery rates.
+Shipping modes with differences between actual and scheduled delivery time.
+Orders that have been flagged as having late delivery risk.
+Changes in delivery performance over time.
 
-Dim_Department (1) ──── (*) Dim_Product
+## Business Recommendations
 
-Dim_Shipping (1) ─────── (*) Fact_table
+-- Inventory Recommendations
+Monitor slow-moving products regularly and consider promotions, discounts, bundling, or inventory redistribution.
+Review dead stock and consider liquidation or other strategies to reduce tied-up capital.
+Prioritize replenishment for products below safety stock levels.
+Use reorder levels to improve inventory planning and reduce the risk of stockouts.
+Monitor fast-moving products closely to maintain sufficient inventory availability.
+Redistribute inventory between warehouses based on regional demand and product performance.
 
-Dim_Location (1) ─────── (*) Fact_table
-
-Dim_Date (1) ─────────── (*) Fact_table
-
-Dim_Warehouse (1) ───── (*) Fact_table
+-- Delivery Recommendations
+Investigate regions with high late delivery rates and identify transportation or operational issues.
+Monitor orders with high late delivery risk and take proactive action before delays occur.
+Compare shipping modes based on actual delivery time, scheduled delivery time, and lead time variance.
+Improve delivery planning in areas where actual shipping times consistently exceed scheduled times.
+Use regional and product-level drill-down analysis to identify the specific causes of delivery delays.
+Continuously monitor delivery trends to identify recurring or seasonal performance issues.
