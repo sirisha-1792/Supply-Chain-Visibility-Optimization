@@ -37,7 +37,7 @@ The main objectives of this milestone are:
 
 ---
 
-# 3. Technology Stack
+## 3. Technology Stack
 
 The following technologies and tools were used:
 
@@ -45,7 +45,7 @@ The following technologies and tools were used:
 - Power Query
 - DAX
 
-# 4. Data Sources
+## 4. Data Sources
 
 The project uses supply chain operational data containing information about:
 
@@ -63,7 +63,7 @@ The project uses supply chain operational data containing information about:
 
 The data was loaded into Power BI and transformed using Power Query before being used for data modeling and analysis.
 
-# Inventory Turnover Calculation Approach
+## Inventory Turnover Calculation Approach
 
 Inventory turnover was calculated to measure how efficiently inventory is being utilized.
 
@@ -80,7 +80,7 @@ DIVIDE(
     0
 )
 
-## Slow-Moving and Fast-Moving Inventory Identification Logic
+# Slow-Moving and Fast-Moving Inventory Identification Logic
 
 Inventory performance was analyzed using the number of days since the last sale.
 
@@ -110,13 +110,13 @@ SWITCH(
     "Active"
 )
 
-# Slow-moving inventory was identified using:
+## Slow-moving inventory was identified using:
 
 Days Since Last Sale > 30 days
 AND
 Days Since Last Sale <= 90 days
 
-# Dead stock was identified using:
+## Dead stock was identified using:
 
 Days Since Last Sale > 90 days
 AND
@@ -126,7 +126,7 @@ Products classified as Active and having high sales quantity, high sales volume,
 
 This classification helps identify products that may require promotional activities, inventory reduction, demand analysis, or replenishment planning.
 
-## Delivery Performance Analysis Methodology
+# Delivery Performance Analysis Methodology
 
 Delivery performance was analyzed using order delivery status, actual shipping time, scheduled shipping time, delivery risk indicators, region, shipping mode, and time-based trends.
 
@@ -144,13 +144,13 @@ Regional Late Rate
 
 On-time, late, and advance shipping performance were analyzed based on delivery status.
 
-# The delivery lead time analysis compared actual shipping time with scheduled shipping time:
+## The delivery lead time analysis compared actual shipping time with scheduled shipping time:
 
 Lead Time Variance = Average Actual Shipping Days-Average Scheduled Shipping Days
 
 A positive lead time variance indicates that actual shipping took longer than scheduled.
 
-# Late delivery risk was analyzed using the late delivery risk indicator. The percentage of risk-flagged orders was calculated as:
+## Late delivery risk was analyzed using the late delivery risk indicator. The percentage of risk-flagged orders was calculated as:
 
 Late Delivery Risk % =
 Total Risk Flagged Orders / Total Orders
@@ -166,8 +166,8 @@ This allows delivery issues to be analyzed from a regional level down to the pro
 
 Delivery trends over time were analyzed using the date dimension and the Late Delivery % Trend measure.
 
-## Key Insights and Business Recommendations
-# Key Insights
+# Key Insights and Business Recommendations
+## Key Insights
 
 The dashboards provide insights into inventory and delivery performance.
 
@@ -191,9 +191,10 @@ Shipping modes with differences between actual and scheduled delivery time.
 Orders that have been flagged as having late delivery risk.
 Changes in delivery performance over time.
 
-## Business Recommendations
+# Business Recommendations
 
 -- Inventory Recommendations
+
 Monitor slow-moving products regularly and consider promotions, discounts, bundling, or inventory redistribution.
 Review dead stock and consider liquidation or other strategies to reduce tied-up capital.
 Prioritize replenishment for products below safety stock levels.
@@ -202,6 +203,7 @@ Monitor fast-moving products closely to maintain sufficient inventory availabili
 Redistribute inventory between warehouses based on regional demand and product performance.
 
 -- Delivery Recommendations
+
 Investigate regions with high late delivery rates and identify transportation or operational issues.
 Monitor orders with high late delivery risk and take proactive action before delays occur.
 Compare shipping modes based on actual delivery time, scheduled delivery time, and lead time variance.
